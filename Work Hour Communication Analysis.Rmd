@@ -1,0 +1,369 @@
+---
+title: "Work Hour Communication Analysis"
+author: "Onifade Monsuru"
+date: "2024-07-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+raw_file <- read.csv("C:/Users/SAIL/Downloads/Email Analysis Dataset.csv")
+library(tidyverse)
+library(dplyr)
+```
+
+# Introduction
+
+Effective communication is crucial for any organization's success. With the rise of digital communication, emails have become a vital tool for exchanging information and collaborating among team members. Analyzing email communication patterns can provide valuable insights into organizational dynamics, productivity, and employee behavior. This project aims to investigate the communication patterns during work hours, focusing on email exchanges between executives, departments, and devices used. The analysis will uncover trends, sentiment, and preferences, providing actionable recommendations for enhancing communication and productivity within the organization.
+
+
+
+# Executive Summary
+
+
+This report presents the findings of the **Work Hour Communication Analysis project**, which examined email communication patterns during work hours. Key takeaways include:
+**Email was exchanged between 47 individuals**
+
+**Sender Profiles**
+
+- Top sender roles: C-level  **287(25%)**, Middle level management **345(31%)**, Professional **500 (44%)**
+```{r sender1, echo=FALSE}
+library(dplyr)
+#Distribution of email senders by their seniority
+sender_level <- raw_file |>
+  count(From.seniority) |>
+  mutate(percentage = (n/sum(n)) * 100)
+sender_level <- sender_level %>%
+  mutate(color = ifelse(n == max(n), "skyblue","gray"))
+
+# Create bar chart with values at the top
+ggplot(sender_level, aes(x = From.seniority, y = n, fill = color)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(n, " (", round(percentage, 1), "%)")), 
+            vjust = -0.5, size = 4) +
+  scale_fill_identity()+
+  labs(title = "Distribution of Senders by their seniority",
+       x = "Seniority Level",
+       y = "Count") +
+  theme_minimal()+
+  theme(legend.position = "none")
+
+```
+
+- Top sender departments: Executive Management **287(25.4%)**, Marketing **146(12.9%)**, Product Development **133(11.7%)**
+
+```{r sender_dept1, echo=FALSE}
+#Distribution of email senders by their department
+sender_dept <- raw_file |>
+  count(From.Department) |>
+  mutate(percentage = (n/sum(n)) * 100)
+
+sender_dept <- sender_dept %>%
+  mutate(color = ifelse(n == max(n), "skyblue", "gray"))
+
+
+# Create bar chart with values at the top
+ggplot(sender_dept, aes(y = From.Department, x = n, , fill = color)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(n, " (", round(percentage, 1), "%)")), 
+            position = position_stack(vjust = 0.5), size = 4, color = "black") +
+  scale_fill_identity() +
+  labs(title = "Distribution of Senders by their Department",
+       x = "Department",
+       y = "Count") +
+  theme_minimal()
+
+```
+
+
+
+
+**Recipient Profiles**
+
+- Top recipient roles: C-level  **48(4%)**, Middle level management **435(39%)**, Professional **649(57%)**
+
+```{r receiver1, echo=FALSE}
+receiver_level <- raw_file |>
+  count(To.seniority) |>
+  mutate(percentage = (n/sum(n)) * 100)
+receiver_level <- receiver_level %>%
+  mutate(color = ifelse(n == max(n), "skyblue", "gray"))
+
+# Create bar chart with values at the top
+ggplot(receiver_level, aes(x = To.seniority, y = n, fill = color)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(n, " (", round(percentage, 1), "%)")), 
+            vjust = -0.5, size = 4) +
+  scale_fill_identity()+
+  labs(title = "Distribution of Receivers by their seniority",
+       x = "Seniority Level",
+       y = "Count") +
+  theme_minimal()
+```
+
+
+
+
+
+
+- Top recipient departments: Product Development **205(18.1%)**, **Marketing (14.5%)**, **Sales(14.1%)**
+```{r receiver_dept1, echo=FALSE}
+#Distribution of email Receivers by their department
+receive_dept <- raw_file |>
+  count(To.Department) |>
+  mutate(percentage = (n/sum(n)) * 100)
+
+receive_dept <- receive_dept %>%
+  mutate(color = ifelse(n == max(n), "skyblue", "gray"))
+
+# Create bar chart with values at the top
+ggplot(receive_dept, aes(y = To.Department, x = n, , fill = color)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(n, " (", round(percentage, 1), "%)")), 
+            position = position_stack(vjust = 0.5), size = 4, color = "black") +
+  scale_fill_identity()+
+  labs(title = "Distribution of Receivers by their Department",
+       x = "Department",
+       y = "Count") +
+  theme_minimal()
+```
+
+
+
+**Email Topics**
+
+- 14 unique topics
+- Top topics: **Sales and Marketing 131(11.57%)**, **Legal matters 128(11.31%)**, **Meeting Scheduling 126(11.13%)**
+```{r topics, echo=FALSE}
+topics <- raw_file |>
+  count(Email.topic) |>
+  mutate(percentage = (n/sum(n)) * 100)
+
+topics <- topics %>%
+  mutate(color = ifelse(n == max(n), "skyblue", "gray"))
+
+# Create bar chart with values at the top
+ggplot(topics, aes(y = Email.topic, x = n, , fill = color)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(n, " (", round(percentage, 1), "%)")), 
+            position = position_stack(vjust = 0.5), size = 4, color = "black") +
+  scale_fill_identity()+
+  labs(title = "Distribution of Emails By Topics",
+       x = "Topics",
+       y = "Count") +
+  theme_minimal()
+```
+
+**Email Sentiment**
+
+- Neutral 660(58.3%), Positive 353(31.18%), Negative 119(10.51%)
+
+```{r sentiment, echo=FALSE}
+sentiment_t <- raw_file |>
+  count(Sentiment) |>
+  mutate(percentage = (n/sum(n)) * 100)
+
+sentiment_t <- sentiment_t %>%
+  mutate(color = ifelse(n == max(n), "skyblue", "gray"))
+
+# Create bar chart with values at the top
+ggplot(sentiment_t, aes(x = Sentiment, y = n, fill = color)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(n, " (", round(percentage, 1), "%)")), 
+            vjust = -0.5, size = 4) +
+  scale_fill_identity()+
+  labs(title = "Distribution of Email Sentiment",
+       x = "Sentiment",
+       y = "Count") +
+  theme_minimal()
+```
+
+**Email Open and Device Usage**
+
+- Opened: 1034(91.3%), Unopened: 98(8.7%)
+```{r mail, echo=FALSE}
+mail <- raw_file |>
+  count(Is.opened.) |>
+  mutate(percentage = (n/sum(n)) * 100)
+
+mail <- mail %>%
+  mutate(color = ifelse(n == max(n), "skyblue", "gray"))
+
+# Create bar chart with values at the top
+ggplot(mail, aes(x = Is.opened., y = n, fill = color)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(n, " (", round(percentage, 1), "%)")), 
+            vjust = -0.5, size = 4) +
+  scale_fill_identity()+
+  labs(title = "Distribution of Opened and Unopened mail",
+       x = "Device",
+       y = "Count") +
+  theme_minimal()
+```
+
+
+
+- Desktop: 860(76%), Mobile: 272(24%)
+```{r device, echo=FALSE}
+tool <- raw_file |>
+  count(Device) |>
+  mutate(percentage = (n/sum(n)) * 100)
+
+tool <- tool %>%
+  mutate(color = ifelse(n == max(n), "skyblue", "gray"))
+
+# Create bar chart with values at the top
+ggplot(tool, aes(x = Device, y = n, fill = color)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(n, " (", round(percentage, 1), "%)")), 
+            vjust = -0.5, size = 4) +
+  scale_fill_identity()+
+  labs(title = "Distribution of Device used",
+       x = "Device",
+       y = "Count") +
+  theme_minimal()
+
+```
+
+**Work Hour and Workday Analysis**
+
+- Emails sent within work hours: 912(80.6%)
+```{r hour, echo=FALSE}
+hour <- raw_file |>
+  count(Within.work.hours) |>
+  mutate(percentage = (n/sum(n)) * 100)
+
+hour <- hour %>%
+  mutate(color = ifelse(n == max(n), "skyblue", "gray"))
+
+# Create bar chart with values at the top
+ggplot(hour, aes(x = Within.work.hours, y = n, fill = color)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(n, " (", round(percentage, 1), "%)")), 
+            vjust = -0.5, size = 4) +
+  scale_fill_identity()+
+  labs(title = "Distribution of Opened and Unopened mail",
+       x = "Work Hours",
+       y = "Count") +
+  theme_minimal()
+```
+
+
+
+- Emails sent within workdays: 1066(94.2%)
+```{r days, echo=FALSE}
+
+day <- raw_file |>
+  count(Within.workdays) |>
+  mutate(percentage = (n/sum(n)) * 100)
+
+day <- day %>%
+  mutate(color = ifelse(n == max(n), "skyblue", "gray"))
+
+# Create bar chart with values at the top
+ggplot(day, aes(x = Within.workdays, y = n, fill = color)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(n, " (", round(percentage, 1), "%)")), 
+            vjust = -0.5, size = 4) +
+  scale_fill_identity()+
+  labs(title = "Distribution of Opened and Unopened mail",
+       x = "Work Day",
+       y = "Count") +
+  theme_minimal()
+```
+
+
+
+The report provides a comprehensive analysis of communication patterns, sentiment, and device usage during work hours. The insights and recommendations offered can help optimize email communication, enhance productivity, and inform future organizational strategies.
+
+
+
+# EXPLORATORY DATA ANALYSIS 
+
+## Communication Patterns During Work Hours
+**What are the most common email topics discussed during work hours?**
+
+**Sales and Marketing (105) is the most discusssed topic during the work hour**
+
+```{r theme1_1, echo=FALSE}
+theme1_1 <- raw_file |>
+  filter(Within.work.hours == "yes")|>
+  group_by(Email.topic) |>
+  summarise(count = n()) |>
+  arrange(desc(count))
+theme1_1 <- theme1_1 %>%
+  mutate(color = ifelse(count == max(count), "skyblue", "gray"))
+
+# Create bar chart with values at the top
+ggplot(theme1_1, aes(x = count, y = Email.topic, fill = color)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = count), 
+            hjust = -0.5, size = 4) +
+  scale_fill_identity()+
+  labs(title = "Distribution of email topics discussed during work hours",
+       x = "Topic",
+       y = "Count") +
+  theme_minimal()
+```
+
+
+### Key Insights
+-The most commmon email topic (Sales and Marketing) discussed was mostly sent or received by the **Professionals** during the work hour.
+
+
+-The sentiment of the most commmon email topic (Sales and Marketing) was **neutral**.
+
+
+-The device mostly used to send or receive the most commmon email topic (Sales and Marketing) was **desktop**.
+
+
+-Emails with this topic are mostly sent/received by the marketing department.
+
+
+
+
+## Executive Communication During Work Hours
+**How many emails do C-level executives send and receive during work hours?**
+
+**C-level executives send(233) and receive(41) mails during work hours**
+
+```{r theme2_1, echo=FALSE}
+# Create a data frame with the values
+email_data <- data.frame(
+  Category = c("Received", "Sent"),
+  Count = c(41, 233)
+)
+
+# Create the bar chart
+ggplot(email_data, aes(x = Category, y = Count, fill = ifelse(Category == "Sent", "skyblue", "gray"))) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = Count), 
+            vjust = -0.5, size = 4) +
+  scale_fill_identity()+
+  labs(title = "Emails C-level executives send and receive during work hours", x = "Category", y = "Count") +
+  theme_minimal()
+
+```
+
+
+### Key Insights
+-The most common topics discussed by C-level executives during work hours are **Product Development(34), Meeting Scheduling(28),Sales and Marketing(26)** and others .
+
+
+-During work hours, C-level executives tend to communicate more with the following departments;**Product development(58), Executive Management(41),Finance and Accounting(31)** and others .
+
+
+-During work hours, C-level executive emails more likely to have a **neutral(144), positive(67) and negative(22) sentiments**.
+
+
+
+
+
+
+
+
+
+```{r cars, echo=FALSE}
+summary(cars)
+```
+

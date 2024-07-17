@@ -1,0 +1,26 @@
+{
+    "id": "55554245",
+    "path": "~/Work-Hour-Communication-Analysis/Work Hour Communication Analysis.Rmd",
+    "project_path": "Work Hour Communication Analysis.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1721232580231.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "23,0",
+        "scrollLine": "0"
+    },
+    "folds": "29|26|50|0|\n54|31|75|0|\n84|28|101|0|\n109|33|128|0|\n136|25|154|0|\n160|28|178|0|\n183|23|201|0|\n206|25|225|0|\n230|23|248|0|\n253|23|272|0|\n",
+    "lastKnownWriteTime": 1721226582,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1721232621169,
+    "read_only": false,
+    "read_only_alternatives": []
+}
